@@ -1,104 +1,95 @@
 import axios from 'axios'
-    import React, { Component } from 'react'
+import React, { Component } from 'react'
+import {Form, FormControl, FormGroup, ControlLabel, HelpBlock, Checkbox, Radio, Button} from 'react-bootstrap';
 
-    class NewProject extends Component {
-      constructor (props) {
-        super(props)
-        this.state = {
-          name: '',
-          description: '',
-          errors: []
-        }
-        this.handleFieldChange = this.handleFieldChange.bind(this)
-        this.handleCreateNewProject = this.handleCreateNewProject.bind(this)
-        this.hasErrorFor = this.hasErrorFor.bind(this)
-        this.renderErrorFor = this.renderErrorFor.bind(this)
-      }
+class NewProject extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      name: '',
+      description: '',
+      errs: []
+    }
+    this.handleInputChange = this.handleInputChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.hasErrorFor = this.hasErrorFor.bind(this)
+    this.renderErrorFor = this.renderErrorFor.bind(this)
+  }
 
-      handleFieldChange (event) {
-        this.setState({
-          [event.target.name]: event.target.value
-        })
-      }
+  handleInputChange(event){
+    
+    this.setState({
+      [event.target.name] : event.target.value
+    },console.log(this.state));
+    
+  }
 
-      handleCreateNewProject (event) {
-        event.preventDefault()
+  handleSubmit(event){
+    event.preventDefault()
+    const {history} = this.props
 
-        const { history } = this.props
+    const project = {
+      name: this.state.name,
+      description: this.state.description
+    }
 
-        const project = {
-          name: this.state.name,
-          description: this.state.description
-        }
-
-        axios.post('/api/projects', project)
+    axios.post('/api/projects', project)
           .then(response => {
-            // redirect to the homepage
             history.push('/')
           })
           .catch(error => {
             this.setState({
-              errors: error.response.data.errors
+              errs: error.response.data.errors
             })
           })
-      }
+  }
+  
+  hasErrorFor(field)
+  {
+    return !!this.state.errs[field]
+  }
 
-      hasErrorFor (field) {
-        return !!this.state.errors[field]
-      }
+  renderErrorFor(field)
+  {
+    if(this.hasErrorFor(field)){
+      return (<div className="alert alert-danger">
+                <strong>{this.state.errs[field][0]}</strong>
+              </div>)
+    }
+  }
 
-      renderErrorFor (field) {
-        if (this.hasErrorFor(field)) {
-          return (
-            <span className='invalid-feedback'>
-              <strong>{this.state.errors[field][0]}</strong>
-            </span>
-          )
-        }
-      }
-
-      render () {
-        return (
-          <div className='container py-4'>
-            <div className='row justify-content-center'>
-              <div className='col-md-6'>
-                <div className='card'>
-                  <div className='card-header'>Create new project</div>
-                  <div className='card-body'>
-                    <form onSubmit={this.handleCreateNewProject}>
-                      <div className='form-group'>
-                        <label htmlFor='name'>Project name</label>
-                        <input
-                          id='name'
-                          type='text'
-                          className={`form-control ${this.hasErrorFor('name') ? 'is-invalid' : ''}`}
-                          name='name'
-                          value={this.state.name}
-                          onChange={this.handleFieldChange}
-                        />
+  render () {
+    const {name, description, errs} = this.state
+    return <div className="container py-4">
+              <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+                <div className="row justify-content-center">
+                  <div className="card" style={{width: '32rem'}}>
+                    <div className="card-header">Create new project</div>
+                    <div className="card-body">
+                      <Form onSubmit={this.handleSubmit}>
+                        <Form.Group controlId="formBasicEmail">
+                          <Form.Label>Project name</Form.Label>
+                          <Form.Control type="text" name="name" placeholder="Enter project name" onChange={this.handleInputChange} />
+                          {/* <Form.Text className="text-muted">
+                            We'll never share your email with anyone else.
+                          </Form.Text> */}
+                        </Form.Group>
                         {this.renderErrorFor('name')}
-                      </div>
-                      <div className='form-group'>
-                        <label htmlFor='description'>Project description</label>
-                        <textarea
-                          id='description'
-                          className={`form-control ${this.hasErrorFor('description') ? 'is-invalid' : ''}`}
-                          name='description'
-                          rows='10'
-                          value={this.state.description}
-                          onChange={this.handleFieldChange}
-                        />
+                        <Form.Group controlId="formBasicPassword">
+                          <Form.Label>Project description</Form.Label>
+                          <Form.Control as="textarea" name="description" type="text" placeholder="Project description" onChange={this.handleInputChange} />
+                        </Form.Group>
                         {this.renderErrorFor('description')}
-                      </div>
-                      <button className='btn btn-primary'>Create</button>
-                    </form>
+                        <Button variant="primary" type="submit">
+                          Submit
+                        </Button> 
+                      </Form> 
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
           </div>
-        )
-      }
-    }
+  }
+}
 
-    export default NewProject
+export default NewProject

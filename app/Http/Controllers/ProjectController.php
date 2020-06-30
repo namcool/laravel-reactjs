@@ -39,7 +39,7 @@ class ProjectController extends Controller
             ],
             [
     			'name.required'=>'Chưa nhập tên project!',
-    			'description.unique'=>'Chưa nhập thông tin project.'
+    			'description.required'=>'Chưa nhập thông tin project.'
     		]
         );
 
