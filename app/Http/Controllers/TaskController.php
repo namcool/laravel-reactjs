@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Task;
+use App\Project;
 
 class TaskController extends Controller
 {
@@ -23,7 +25,11 @@ class TaskController extends Controller
       {
         $task->is_completed = true;
         $task->update();
+        $id = $task->project_id;
 
-        return response()->json('Task updated!');
+        $project = Project::with('tasks')->find($id);
+
+        return $project->toJson();
+        //return response()->json('Task updated!');
       }
 }

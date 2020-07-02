@@ -33,12 +33,13 @@ class ProjectsList extends Component {
                       <Link to="/create" className="btn btn-primary mb-3">Card link</Link>
                       <ul className="list-group mt-1">
                         {projects && projects.map((p  , index) => (
-                          <Link key={index} to={`/${p.id}`} className="ist-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                          <Link key={index} to={`/${p.id}`} className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                           {p.name}
-                          <div>
-                            {index == 0 ? <span className="badge badge-danger ml-1 mr-1">New</span> :''}
-                            <span className="badge badge-primary">{p.tasks_count}</span>
-                          </div>
+                            <div>
+                              {index == 0 ? <span className="badge badge-danger ml-1 mr-1">New</span> :''}
+                              {p.is_completed == 1 ? <span className="badge badge-success ml-1 mr-1">Completed</span> :''}
+                              <span className="badge badge-primary">{p.tasks_count}</span>
+                            </div>
                           </Link>
                         ))}
                           
